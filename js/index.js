@@ -26,16 +26,20 @@ document.addEventListener('readystatechange',function(){
      var spanprogress_op=document.querySelector('#spanprogress_op');
      var spanplaybar=document.querySelector('#spanplaybar');
      var divsonglist=document.querySelector('#divsonglist');
-     var musicname=document.querySelector("#music_name");
+     var musicname=document.querySelector('.music_name');
      var prevbt=document.querySelector('.prev_bt');
      var nextbt=document.querySelector('.next_bt');
      var btnPlayway=document.querySelector('#btnPlayway');
      var divselect=document.querySelector('#divselect');
+     var singername=document.querySelector('.singer_name');
+     var ptime=document.querySelector('#ptime');
+     var clearlist=document.querySelector('#clear_list');
      var num;
-
+     var list=divsonglist.firstElementChild.children;//获取div下的第一个子元素的所有子元素
      //添加列表
-     var yinyueku=[{name:"바람이나 좀 쐐 (吹吹风)",src:"ccf.mp3",geshou:"gary",times:"03:42"},{name:"또 하루 (feat. Gaeko) (又一天)",src:"yyt.mp3",geshou:"gary",times:"03:37"},{name:"我的天空",src:"wdtk.mp3",geshou:"南征北战",times:"03:54"},{name:"最初的梦想",src:"zcdmx.mp3",geshou:"范玮琪",times:"04:56"},{name:"时光隧道",src:"sgsd.mp3",geshou:"陈奕迅",times:"04:20"},{name:"あなたにおくるアイの歌",src:"001.mp3",geshou:"egoist - Departures",times:"04:15"},{name:"你把我灌醉",src:"nbwgz.mp3",geshou:"G.E.M. 邓紫棋",times:"05:02"},{name:"Back to December",src:"Back to December.mp3",geshou:"Taylor Swift",times:"04:54"},{name:"碌咔",src:"lk.mp3",geshou:"陈奕迅",times:"03:36"}];
-    var addli=function(){
+      var yinyueku=[{name:"바람이나 좀 쐐 (吹吹风)",src:"ccf.mp3",geshou:"gary",times:"03:42"},{name:"또 하루 (feat. Gaeko) (又一天)",src:"yyt.mp3",geshou:"gary",times:"03:37"},{name:"我的天空",src:"wdtk.mp3",geshou:"南征北战",times:"03:54"},{name:"最初的梦想",src:"zcdmx.mp3",geshou:"范玮琪",times:"04:56"},{name:"时光隧道",src:"sgsd.mp3",geshou:"陈奕迅",times:"04:20"},{name:"あなたにおくるアイの歌",src:"001.mp3",geshou:"egoist - Departures",times:"04:15"},{name:"你把我灌醉",src:"nbwgz.mp3",geshou:"G.E.M. 邓紫棋",times:"05:02"},{name:"Back to December",src:"Back to December.mp3",geshou:"Taylor Swift",times:"04:54"},{name:"碌咔",src:"lk.mp3",geshou:"陈奕迅",times:"03:36"}];
+      
+      var addli=function(){
         var el=" ";
         for(var i=0;i<yinyueku.length;i++){
             el += '<li mid="j0" class=""><strong class="music_name" title="'+yinyueku[i].name+'">'+yinyueku[i].name+'</strong> <strong class="singer_name" title="'+yinyueku[i].geshou+'">'+yinyueku[i].geshou+'</strong><strong class="play_time">'+yinyueku[i].times+'</strong><div class="list_cp"><strongclass="btn_like" title="喜欢" name="myfav_0038RM350w8m1V" mid="0038RM350w8m1V"><span>我喜欢</span></strong><strong class="btn_share" title="分享"><span>分享</span></strong><strong class="btn_fav" title="收藏到歌单"><span>收藏</span></strong><strong class="btn_del" title="从列表中删除"><span>删除</span></strong></div></li>'
@@ -43,20 +47,16 @@ document.addEventListener('readystatechange',function(){
         divsonglist.firstElementChild.innerHTML=el;
 
         //列表点击换歌
-        var list=divsonglist.firstElementChild.children;//获取div下的第一个子元素的所有子元素
+        
         for(var i=0;i<list.length;i++){
             list[i].index=i;
             list[i].onclick=function(){
-                num=this.index;
+               num=this.index;
                audio.src=yinyueku[this.index].src;
                audio.play();
                btnplay.classList.add("pause_bt");
                btnplay.classList.remove("play_bt");
-               for(var j=0;j<list.length;j++){
-                   list[j].classList.remove("play_current");
-               }
-               list[this.index].classList.add("play_current");
-
+               onsongchange();
             }
             //移上移出效果
             list[i].onmouseover=function(){
@@ -65,49 +65,99 @@ document.addEventListener('readystatechange',function(){
             list[i].onmouseout=function(){
                 list[this.index].classList.remove("play_hover");
             }
+        }
 
-
-        //上一页下一页
-        
-
-            prevbt.onclick=function(){
-                if(num==undefined){return}
-                num--;
-                if(num<0){
-                    num=list.length-1;
-                }
-                audio.src=yinyueku[num].src;
-                for(var j=0;j<list.length;j++){
-                   list[j].classList.remove("play_current");
-                }
-                list[num].classList.add("play_current");
-                btnplay.classList.add("pause_bt");
-                audio.play();
+        var btndel=document.querySelectorAll('.btn_del');
+        console.log(btndel)
+        //单首删除
+        for(var i=0;i<btndel.length;i++){
+          btndel[i].index=i;
+          btndel[i].onclick=function(e){
+            e.stopPropagation();
+            var newsz=[];
+            for(var j=0;j<yinyueku.length;j++){
+              if(yinyueku[this.index]!=yinyueku[i]){
+                newsz.push(yinyueku[i]);
+              }
             }
-            nextbt.onclick=function(){
-                if(num==undefined){return}
-                num++;
-                if(num>list.length-1){
-                    num=0;
-                }
-                audio.src=yinyueku[num].src;
-                for(var j=0;j<list.length;j++){
-                   list[j].classList.remove("play_current");
-                }
-                list[num].classList.add("play_current");
-                btnplay.classList.add("pause_bt");
-                audio.play();
-            }
+            console.log(newsz)
+            yinyueku=newsz;
+          }
         }
     }
     addli();
 
+
+    
+
+
+    //清除列表
+    clearlist.onclick=function(){
+      yinyueku=[];
+      addli();
+      uireset();
+      musicnum();
+    }
+    var uireset=function(){
+      musicname.firstElementChild.innerHTML="听你想听的歌";
+      singername.innerHTML="QQ音乐";
+      ptime.innerHTML="";
+      audio.src="";
+      audio.pause();
+    }
+
+    //换歌UI
+    var onsongchange=function(){
+      for(var j=0;j<list.length;j++){
+        list[j].classList.remove("play_current");
+      }
+        list[num].classList.add("play_current");
+        musicname.firstElementChild.innerHTML=yinyueku[num].name;
+        singername.innerHTML=yinyueku[num].geshou;
+        ptime.innerHTML=yinyueku[num].times;
+    }
+
+    
+
+
+
+    //上一页下一页
+    
+
+        prevbt.onclick=function(){
+            if(num==undefined){return}
+            num--;
+            if(num<0){
+                num=list.length-1;
+            }
+            audio.src=yinyueku[num].src;
+            btnplay.classList.add("pause_bt");
+            audio.play();
+            onsongchange();
+
+        }
+        nextbt.onclick=function(){
+            if(num==undefined){return}
+            num++;
+            if(num>list.length-1){
+                num=0;
+            }
+            audio.src=yinyueku[num].src;
+            btnplay.classList.add("pause_bt");
+            audio.play();
+            onsongchange();
+        }
+
      
      
      //显示有多少首歌
-     var spansongnum1=document.querySelector('#spansongnum1');
-     console.log(spansongnum1)
-     spansongnum1.innerHTML='<span>'+yinyueku.length+'</span>'
+     var musicnum=function(){
+      var spansongnum1=document.querySelector('#spansongnum1');
+      console.log(spansongnum1)
+      spansongnum1.innerHTML='<span>'+yinyueku.length+'</span>'
+     }
+     musicnum();
+     
 
       //滚动条控制声音
       spanvolume.onclick=function(e){
