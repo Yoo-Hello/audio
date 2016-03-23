@@ -38,7 +38,6 @@ document.addEventListener('readystatechange',function(){
      var list=divsonglist.firstElementChild.children;//获取div下的第一个子元素的所有子元素
      //添加列表
       var yinyueku=[{name:"바람이나 좀 쐐 (吹吹风)",src:"ccf.mp3",geshou:"gary",times:"03:42"},{name:"또 하루 (feat. Gaeko) (又一天)",src:"yyt.mp3",geshou:"gary",times:"03:37"},{name:"我的天空",src:"wdtk.mp3",geshou:"南征北战",times:"03:54"},{name:"最初的梦想",src:"zcdmx.mp3",geshou:"范玮琪",times:"04:56"},{name:"时光隧道",src:"sgsd.mp3",geshou:"陈奕迅",times:"04:20"},{name:"あなたにおくるアイの歌",src:"001.mp3",geshou:"egoist - Departures",times:"04:15"},{name:"你把我灌醉",src:"nbwgz.mp3",geshou:"G.E.M. 邓紫棋",times:"05:02"},{name:"Back to December",src:"Back to December.mp3",geshou:"Taylor Swift",times:"04:54"},{name:"碌咔",src:"lk.mp3",geshou:"陈奕迅",times:"03:36"}];
-      
       var addli=function(){
         var el=" ";
         for(var i=0;i<yinyueku.length;i++){
@@ -68,19 +67,18 @@ document.addEventListener('readystatechange',function(){
         }
 
         var btndel=document.querySelectorAll('.btn_del');
-        console.log(btndel)
         //单首删除
+        //歌曲删除了 但是名字还在列表显示
         for(var i=0;i<btndel.length;i++){
           btndel[i].index=i;
           btndel[i].onclick=function(e){
             e.stopPropagation();
             var newsz=[];
             for(var j=0;j<yinyueku.length;j++){
-              if(yinyueku[this.index]!=yinyueku[i]){
-                newsz.push(yinyueku[i]);
+              if(yinyueku[this.index]!=yinyueku[j]){
+                newsz.push(yinyueku[j]);
               }
             }
-            console.log(newsz)
             yinyueku=newsz;
           }
         }
@@ -153,7 +151,6 @@ document.addEventListener('readystatechange',function(){
      //显示有多少首歌
      var musicnum=function(){
       var spansongnum1=document.querySelector('#spansongnum1');
-      console.log(spansongnum1)
       spansongnum1.innerHTML='<span>'+yinyueku.length+'</span>'
      }
      musicnum();
@@ -170,11 +167,6 @@ document.addEventListener('readystatechange',function(){
         var v=audio.volume*100;
         spanvolumeop.style.left=v+"%";
         spanvolumebar.style.width=v+"%";
-        if(audio.volume === 0){
-          mute.classList.add("off");
-        }else{
-          mute.classList.remove("off");
-        }
       }
     	//静音
     	spanmute.onclick=(function(){
